@@ -8,6 +8,7 @@ sys.path.append(os.path.join(here, "./vendored"))
 import requests
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Bot
 
+
 TOKEN = os.environ['TELEGRAM_TOKEN']
 BASE_URL = "https://api.telegram.org/bot{}".format(TOKEN)
 
@@ -32,12 +33,15 @@ def build_menu(buttons, n_cols, header_buttons=None, footer_buttons=None):
 
 
 def handler(event, context):
-    print('=== start ===')
-    
+    print('=== start ===')    
     try:
+        # Need to check the bug here
+        bot.sendMessage('660987935', json.dumps('a'))
         data = json.loads(event["body"])
         message = str(data["message"]["text"])
         chat_id = data["message"]["chat"]["id"]
+        bot.sendMessage('660987935', json.dumps(data))        
+
 
         if '/scan' in message:
             response = format_items(db.scan_table('uc_db'))
