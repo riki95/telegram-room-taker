@@ -1,16 +1,16 @@
 import json
 import os
 import sys
+import boto3
+import requests
 here = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(here, "./vendored"))
 
-import requests
 
 TOKEN = os.environ['TELEGRAM_TOKEN']
 BASE_URL = "https://api.telegram.org/bot{}".format(TOKEN)
 
-#########################################################
-import boto3
+
 dynamodb = boto3.resource('dynamodb')
 
 
@@ -44,10 +44,6 @@ def format_items(items):
 def handler(event, context):
     print('=== start ===')
     
-    #print(scan_table('uc_db'))
-    #insert_table('uc_db', 'r4', 'ok')
-    #print(scan_table('uc_db'))
-    
     try:
         data = json.loads(event["body"])
         message = str(data["message"]["text"])
@@ -69,8 +65,8 @@ def handler(event, context):
         requests.post(url, data)
 
     except Exception as e:
-        print('exception', e)
+        print('exception:', e)
     
     print('=== end ===')
-    return {"statusCode": 200, "body": 'aa'}
+    return {"statusCode": 200}
 
