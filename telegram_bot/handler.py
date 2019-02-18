@@ -1,10 +1,11 @@
 import json
 import os
 import sys
-import boto3
-import requests
+
 here = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(here, "./vendored"))
+import boto3
+import requests
 
 
 TOKEN = os.environ['TELEGRAM_TOKEN']
@@ -41,6 +42,15 @@ def format_items(items):
     return res
 
 
+def build_menu(buttons, n_cols, header_buttons=None, footer_buttons=None):
+    menu = [buttons[i:i + n_cols] for i in range(0, len(buttons), n_cols)]
+    if header_buttons:
+        menu.insert(0, header_buttons)
+    if footer_buttons:
+        menu.append(footer_buttons)
+    return menu
+
+
 def handler(event, context):
     print('=== start ===')
     
@@ -55,6 +65,8 @@ def handler(event, context):
             mess_args = message.split()
             r = mess_args [1]
             response = r
+        elif '/rooms' in message:
+            response = build_menu(['uno', 'due'], 2, None, None)
         else:
             response = 'hello' #json.dumps(event)
 
@@ -69,4 +81,3 @@ def handler(event, context):
     
     print('=== end ===')
     return {"statusCode": 200}
-
