@@ -7,16 +7,17 @@ sys.path.append(os.path.join(here, "./vendored"))
 import boto3
 
 dynamodb = boto3.resource('dynamodb')
+table_name = 'uc_rooms'
 
 
-def scan_table(table_name):
+def scan_table():
     table = dynamodb.Table(table_name)
     
     items = table.scan()
     return items['Items']
 
 
-def insert_table(table_name, room, status):
+def insert_table(room, status):
     table = dynamodb.Table(table_name)
     
     item = {

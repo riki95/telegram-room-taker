@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import traceback
 import aws_db as db
 
 here = os.path.dirname(os.path.realpath(__file__))
@@ -16,10 +17,10 @@ bot = Bot(TOKEN)
 
 def format_items(items):
     res = ''
-    
     for item in items:
-        res += json.dumps(item) + '\n'
-        
+        res += 'Room {item[room]}: {status}\n'.format(
+            item=item, 
+            status='occupied' if item["occupied"] else 'free')
     return res
 
 
@@ -32,39 +33,53 @@ def build_menu(buttons, n_cols, header_buttons=None, footer_buttons=None):
     return menu
 
 
+def button_list(rooms, status):
+    return [ 
+        InlineKeyboardButton(
+            "Room {}".format(room["room"]),
+            callback_data='room {} {}'.format(room["room"], status)
+        ) for room in rooms
+    ]
+
+
 def handler_cb(data):
-    text = data["callback_query"]["data"]
-    chat_id = data["callback_query"]["message"]["chat"]["id"]
-    cb_id = data["callback_query"]["id"]
-    bot.answer_callback_query(cb_id)
-    bot.send_message(chat_id, text)
+    try:
+        text = data["callback_query"]["data"]
+        chat_id = data["callback_query"]["message"]["chat"]["id"]
+        cb_id = data["callback_query"]["id"]
 
-def button_list():
-    return [
-                InlineKeyboardButton("Room 214", callback_data='214'),
-                InlineKeyboardButton("Room 215", callback_data='215'),
-                InlineKeyboardButton("Room 216", callback_data='216'),
-                InlineKeyboardButton("Room 217", callback_data='217')
-            ]
+        text = text.split()
+        bot.send_message(chat_id, json.dumps(text))
 
+        if text[0] == 'room':
+            db.insert_table(text[1], bool(text[2]))
+            bot.send_message(chat_id, 'room {} {}'.format(text[1], 'taken' if bool(text[2]) else 'freed'))
+
+        bot.answer_callback_query(cb_id)
+
+    except Exception:
+        bot.send_message(chat_id, traceback.format_exc())
 
 def handler_mess(data):
     try:    
         message = str(data["message"]["text"])
         chat_id = data["message"]["chat"]["id"]
 
-        if '/scan' in message:
-            bot.send_message(chat_id, format_items(db.scan_table('uc_db')))
+        if '/status' in message:
+            bot.send_message(chat_id, format_items(db.scan_table()))
         elif '/add' in message:
             mess_args = message.split()
             bot.send_message(chat_id, mess_args[1])
-        elif '/rooms' in message:
-            reply_markup = InlineKeyboardMarkup(build_menu(button_list(), n_cols=2))
-            bot.send_message(chat_id, "Room Picker", reply_markup=reply_markup)
+        elif '/take' in message:
+            reply_markup = InlineKeyboardMarkup(build_menu(button_list(db.scan_table(), True), n_cols=2))
+            bot.send_message(chat_id, "Take a room:", reply_markup=reply_markup)
+        elif '/free' in message:
+            reply_markup = InlineKeyboardMarkup(build_menu(button_list(db.scan_table(), False), n_cols=2))
+            bot.send_message(chat_id, "Free a room:", reply_markup=reply_markup)
         else:
             pass
-    except Exception as e:
-        bot.send_message(chat_id, str(e))
+    except Exception:
+        bot.send_message(chat_id, traceback.format_exc())
 
     
 def handler(event, context):
