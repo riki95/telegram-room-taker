@@ -62,6 +62,8 @@ def handler_cb(data):
 
 def handler_mess(data):
     try:    
+        bot.send_message(660987935, json.dumps(data["message"]))
+
         message = str(data["message"]["text"])
         chat_id = data["message"]["chat"]["id"]
 
@@ -77,19 +79,26 @@ def handler_mess(data):
             reply_markup = InlineKeyboardMarkup(build_menu(button_list(db.scan_table(), False), n_cols=2))
             bot.send_message(chat_id, "Free a room:", reply_markup=reply_markup)
         else:
-            pass
+            bot.send_message(chat_id, 'ciao')
     except Exception:
         bot.send_message(chat_id, traceback.format_exc())
 
-    
+
 def handler(event, context):
-    print('=== start ===')    
+    try:
+        print('=== start ===')    
 
-    data = json.loads(event["body"])
-    if 'callback_query' in data:
-        handler_cb(data)
-    else:
-        handler_mess(data)
+        bot.send_message('660987935', 'wewe')
+        data = json.loads(event["body"])
+        if 'callback_query' in data:
+            bot.send_message('660987935', 'cb')
+            handler_cb(data)
+        else:
+            bot.send_message('660987935', 'msg')
+            handler_mess(data)
 
-    print('=== end ===')
-    return {"statusCode": 200}
+        print('=== end ===')
+    except Exception:
+        bot.send_message('660987935', traceback.format_exc())
+    finally:
+        return {"statusCode": 200}
