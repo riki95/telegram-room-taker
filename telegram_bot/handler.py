@@ -39,37 +39,34 @@ def handler_cb(data):
     bot.answer_callback_query(cb_id)
     bot.send_message(chat_id, text)
 
+def button_list():
+    return [
+                InlineKeyboardButton("Room 214", callback_data='214'),
+                InlineKeyboardButton("Room 215", callback_data='215'),
+                InlineKeyboardButton("Room 216", callback_data='216'),
+                InlineKeyboardButton("Room 217", callback_data='217')
+            ]
+
 
 def handler_mess(data):
     try:    
         message = str(data["message"]["text"])
         chat_id = data["message"]["chat"]["id"]
 
-        reply_markup = None
-
         if '/scan' in message:
-            response = format_items(db.scan_table('uc_db'))
+            bot.send_message(chat_id, format_items(db.scan_table('uc_db')))
         elif '/add' in message:
             mess_args = message.split()
-            r = mess_args [1]
-            response = r
+            bot.send_message(chat_id, mess_args[1])
         elif '/rooms' in message:
-            button_list = [
-                InlineKeyboardButton("Room 214", callback_data='214'),
-                InlineKeyboardButton("Room 215", callback_data='215'),
-                InlineKeyboardButton("Room 216", callback_data='216'),
-                InlineKeyboardButton("Room 217", callback_data='217')
-            ]
-            reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=2))
-            response = "A two-column menu"
+            reply_markup = InlineKeyboardMarkup(build_menu(button_list(), n_cols=2))
+            bot.send_message(chat_id, "Room Picker", reply_markup=reply_markup)
         else:
-            response = 'hello'
+            pass
     except Exception as e:
-        response = str(e)
+        bot.send_message(chat_id, str(e))
 
-    bot.send_message(chat_id, response, reply_markup=reply_markup)
-
-
+    
 def handler(event, context):
     print('=== start ===')    
 
