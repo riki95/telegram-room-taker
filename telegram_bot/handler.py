@@ -91,7 +91,7 @@ def handler_mess(data):
     chat_id = data['message']['chat']['id']
 
     if '/status' in message:
-        handle_status()
+        handle_status(data)
     elif '/add' in message:
         pass
     elif '/take' in message:
