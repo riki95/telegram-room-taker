@@ -32,16 +32,20 @@ def build_menu(buttons, n_cols, header_buttons=None, footer_buttons=None):
     return menu
 
 
-def handler(event, context):
-    print('=== start ===')    
-    try:
-        # Need to check the bug here
-        bot.sendMessage('660987935', json.dumps('a'))
-        data = json.loads(event["body"])
+def handler_cb(data):
+    text = data["callback_query"]["data"]
+    chat_id = data["callback_query"]["message"]["chat"]["id"]
+    cb_id = data["callback_query"]["id"]
+    bot.answer_callback_query(cb_id)
+    bot.send_message(chat_id, text)
+
+
+def handler_mess(data):
+    try:    
         message = str(data["message"]["text"])
         chat_id = data["message"]["chat"]["id"]
-        bot.sendMessage('660987935', json.dumps(data))        
 
+        reply_markup = None
 
         if '/scan' in message:
             response = format_items(db.scan_table('uc_db'))
@@ -51,26 +55,29 @@ def handler(event, context):
             response = r
         elif '/rooms' in message:
             button_list = [
-                InlineKeyboardButton("col1", callback_data='uno'),
-                InlineKeyboardButton("col2", callback_data='due'),
-                InlineKeyboardButton("row 2", callback_data='tre')
+                InlineKeyboardButton("Room 214", callback_data='214'),
+                InlineKeyboardButton("Room 215", callback_data='215'),
+                InlineKeyboardButton("Room 216", callback_data='216'),
+                InlineKeyboardButton("Room 217", callback_data='217')
             ]
             reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=2))
-            bot.send_message(chat_id, "A two-column menu", reply_markup=reply_markup)
-            
+            response = "A two-column menu"
         else:
-            response = 'hello' #json.dumps(event)
-
-        print('res', response)
-
-        
-
+            response = 'hello'
     except Exception as e:
         response = str(e)
-    
-    data = {"text": response.encode("utf8"), "chat_id": chat_id}
-    url = BASE_URL + "/sendMessage"
-    requests.post(url, data)
+
+    bot.send_message(chat_id, response, reply_markup=reply_markup)
+
+
+def handler(event, context):
+    print('=== start ===')    
+
+    data = json.loads(event["body"])
+    if 'callback_query' in data:
+        handler_cb(data)
+    else:
+        handler_mess(data)
 
     print('=== end ===')
     return {"statusCode": 200}
