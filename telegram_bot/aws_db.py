@@ -19,10 +19,10 @@ def scan_table():
 
 def insert_table(room, status):
     table = dynamodb.Table(table_name)
-    
+
     item = {
         'room': room,
-        'status': status
+        'occupied': status
     }
-    
+
     table.put_item(Item=item)
