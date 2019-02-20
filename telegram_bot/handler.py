@@ -63,8 +63,6 @@ def handle_room(data, action):
 
 
 def handler_mess(data):
-	#bot.send_message(CHAT_BOT, json.dumps(data['message']))
-
 	message = str(data['message']['text'])
 	chat_id = data['message']['chat']['id']
 
