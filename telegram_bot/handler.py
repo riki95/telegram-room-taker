@@ -25,7 +25,7 @@ def handle_cb_room(data):
 	room = text[1]
 	take = text[2] == 'take'
 
-	db.insert(room, take)
+	db.update(room, take)
 
 	bot.send_message(chat_id, 'room {} {}'.format(room, 'taken' if take else 'freed'))
 

@@ -8,18 +8,23 @@ table_name = 'uc_rooms'
 def query(occupied):
     table = dynamodb.Table(table_name)
 
-    items = table.scan(
+    response = table.scan(
         FilterExpression=Key('occupied').eq(occupied)
     )
 
-    return items['Items']
+    items = response['Items']
+
+    return sorted(items, key=lambda r: r['room'])
 
 
 def scan():
     table = dynamodb.Table(table_name)
 
-    items = table.scan()
-    return items['Items']
+    response = table.scan()
+
+    items = response['Items']
+
+    return sorted(items, key=lambda r: r['room'])
 
 
 def insert(room, occupied):
@@ -32,17 +37,15 @@ def insert(room, occupied):
 
     table.put_item(Item=item)
 
+
 def update(room, occupied):
     table = dynamodb.Table(table_name)
 
-    response = table.update_item(
+    table.update_item(
         Key={'room': room},
         UpdateExpression='set occupied = :o',
         ExpressionAttributeValues={
             ':o': occupied
-        },
-        ReturnValues='UPDATED_NEW'
+        }
     )
-
-    return response
 
