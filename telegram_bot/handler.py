@@ -63,7 +63,7 @@ def handle_room(data, action):
 
 
 def handler_mess(data):
-	bot.send_message(CHAT_BOT, json.dumps(data['message']))
+	#bot.send_message(CHAT_BOT, json.dumps(data['message']))
 
 	message = str(data['message']['text'])
 	chat_id = data['message']['chat']['id']
@@ -76,10 +76,8 @@ def handler_mess(data):
 		handle_room(data, 'free')
 	elif '/start' in message:
 		first_name = data['message']['chat']['first_name']
-		last_name = data['message']['chat']['last_name']
-		username = data['message']['chat']['username']
 
-		bot.send_message(chat_id, 'Welcome {} {} {}, click /info to see available commands'.format(first_name, last_name, username)
+		bot.send_message(chat_id, 'Welcome {}, click /info to see available commands'.format(first_name))
 	elif '/info' in message:
 		bot.send_message(chat_id, '/status to see available rooms\n/take to reserve a room\n/free to end reservation')
 	else:
