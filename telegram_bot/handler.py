@@ -43,13 +43,13 @@ def handler_cb(data):
 def handle_status(data):
     chat_id = data['message']['chat']['id']
 
-    bot.send_message(chat_id, builder.format_items(db.scan_table()))
+    bot.send_message(chat_id, builder.format_items(db.scan()))
 
 
 def handle_room(data, action):
     chat_id = data['message']['chat']['id']
 
-    buttons = builder.button_list(db.scan_table(), action)
+    buttons = builder.button_list(db.scan(), action)
     reply_markup = builder.build_menu(buttons, n_cols=2)
 
     bot.send_message(chat_id, 'Take a room:', reply_markup=reply_markup)
