@@ -24,7 +24,7 @@ def handle_cb_room(data):
     room = text[1]
     take = text[2] == 'take'
 
-    db.insert_table(room, take)
+    db.insert(room, take)
 
     bot.send_message(chat_id, 'room {} {}'.format(room, 'taken' if take else 'freed'))
 
@@ -56,7 +56,7 @@ def handle_room(data, action):
 
 
 def handler_mess(data):
-    bot.send_message(660987935, json.dumps(data['message']))
+    #bot.send_message(660987935, json.dumps(data['message']))
 
     message = str(data['message']['text'])
     chat_id = data['message']['chat']['id']
@@ -64,7 +64,7 @@ def handler_mess(data):
     if '/status' in message:
         handle_status(data)
     elif '/add' in message:
-        pass
+        bot.send_message(chat_id, json.dumps(db.query(True)))
     elif '/take' in message:
         handle_room(data, 'take')
     elif '/free' in message:
