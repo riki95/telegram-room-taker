@@ -13,6 +13,7 @@ from telegram import Bot
 
 TOKEN = os.environ['TELEGRAM_TOKEN']
 BASE_URL = 'https://api.telegram.org/bot{}'.format(TOKEN)
+CHAT_BOT = os.environ['CHAT_BOT']
 
 bot = Bot(TOKEN)
 
@@ -56,7 +57,7 @@ def handle_room(data, action):
 
 
 def handler_mess(data):
-    bot.send_message(660987935, json.dumps(data['message']))
+    bot.send_message(CHAT_BOT, json.dumps(data['message']))
 
     message = str(data['message']['text'])
     chat_id = data['message']['chat']['id']
@@ -85,6 +86,6 @@ def handler(event, context):
 
         print('=== end ===')
     except Exception:
-        bot.send_message('660987935', traceback.format_exc())
+        bot.send_message(CHAT_BOT, traceback.format_exc())
     finally:
         return {'statusCode': 200}
