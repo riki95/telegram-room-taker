@@ -9,10 +9,10 @@ def query(occupied):
     table = dynamodb.Table(table_name)
 
     items = table.scan(
-        FilterExpression=Key('occupied').eq(True)
+        FilterExpression=Key('occupied').eq(occupied)
     )
 
-    return items
+    return items['Items']
 
 
 def scan():
