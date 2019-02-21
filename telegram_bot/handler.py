@@ -23,15 +23,14 @@ def handle_cb_room(data):
 	text = data['callback_query']['data'].split()
 
 	room = text[1]
-	take = text[2] == 'take'
+	next_status = text[2] == 'take'  # If we take the room next status is TRUE (taken), if we free then will be FALSE
 
-	if take:
-		db.update(room, take, chat_id)
+	if next_status:
+		db.update(room, next_status, chat_id)  # Take the room and set chat id
 	else:
-		db.update(room, take, '0')
+		db.update(room, next_status, '0')  # Free the room and reset chat id
 
-	bot.send_message(chat_id, 'room {} {}'.format(room, 'taken' if take else 'freed'))
-
+	bot.send_message(chat_id, 'room {} {}'.format(room, 'taken' if next_status else 'freed'))
 
 
 def handler_cb(data):
@@ -55,9 +54,9 @@ def handle_room(data, action):
 
 	occupied = action == 'free'
 	if occupied:
-		rooms = db.query(occupied, chat_id)
+		rooms = db.query(occupied, chat_id)  # Return rooms occupied by that chat_id
 	else:
-		rooms = db.query(occupied, '0')
+		rooms = db.query(occupied, '0')  # Return all the free rooms
 
 	if len(rooms) == 0:
 		bot.send_message(chat_id, 'No rooms available\nCheck /status' if action == 'take' else 'No rooms are occupied\nCheck /status')
@@ -80,7 +79,6 @@ def handler_mess(data):
 		handle_room(data, 'free')
 	elif '/start' in message:
 		first_name = data['message']['chat']['first_name']
-
 		bot.send_message(chat_id, 'Welcome {}, click /info to see available commands'.format(first_name))
 	elif '/info' in message:
 		bot.send_message(chat_id, '/status to see available rooms\n/take to reserve a room\n/free to end reservation')
@@ -88,18 +86,17 @@ def handler_mess(data):
 		pass
 
 
+# MAIN HANDLER - Entry point of the telegram message
 def handler(event, context):
 	try:
-		print('=== start ===')
-
 		data = json.loads(event['body'])
 		if 'callback_query' in data:
 			handler_cb(data)
 		else:
 			handler_mess(data)
 
-		print('=== end ===')
 	except Exception:
 		bot.send_message(CHAT_BOT, traceback.format_exc())
+		
 	finally:
 		return {'statusCode': 200}

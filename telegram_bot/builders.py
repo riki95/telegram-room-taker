@@ -6,6 +6,7 @@ sys.path.append(os.path.join(here, './vendored'))
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Bot
 
+
 def format_items(items):
     res = ''
     for item in items:

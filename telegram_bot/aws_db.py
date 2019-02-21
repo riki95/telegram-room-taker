@@ -10,11 +10,11 @@ def query(occupied, chat_id):
 
     response = ''
     if chat_id != '0':
-        response = table.scan(
+        response = table.scan(  # Return all of the rooms occupied by a certain chat_id
             FilterExpression=Key('occupied').eq(occupied) and Key('id').eq(chat_id)
         )
     else:
-        response = table.scan(
+        response = table.scan(  # Otherwise just return all of the free rooms
             FilterExpression=Key('occupied').eq(occupied),
         )
 
