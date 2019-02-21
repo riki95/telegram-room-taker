@@ -9,7 +9,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Bot
 def format_items(items):
     res = ''
     for item in items:
-        res += 'Room {item[room]}: {status}\n'.format(
+        res += 'Room {item[room]}: {status} by {item[id]}\n'.format(
             item=item,
             status='occupied' if item['occupied'] else 'free')
     return res

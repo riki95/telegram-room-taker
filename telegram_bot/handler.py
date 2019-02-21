@@ -25,7 +25,10 @@ def handle_cb_room(data):
 	room = text[1]
 	take = text[2] == 'take'
 
-	db.update(room, take)
+	if take:
+		db.update(room, take, chat_id)
+	else:
+		db.update(room, take, '0')
 
 	bot.send_message(chat_id, 'room {} {}'.format(room, 'taken' if take else 'freed'))
 
@@ -51,7 +54,10 @@ def handle_room(data, action):
 	chat_id = data['message']['chat']['id']
 
 	occupied = action == 'free'
-	rooms = db.query(occupied)
+	if occupied:
+		rooms = db.query(occupied, chat_id)
+	else:
+		rooms = db.query(occupied, '0')
 
 	if len(rooms) == 0:
 		bot.send_message(chat_id, 'No rooms available\nCheck /status' if action == 'take' else 'No rooms are occupied\nCheck /status')
@@ -59,7 +65,7 @@ def handle_room(data, action):
 		buttons = builder.button_list(rooms, action)
 		reply_markup = builder.build_menu(buttons, n_cols=2)
 
-		bot.send_message(chat_id, 'Take a room:', reply_markup=reply_markup)
+		bot.send_message(chat_id, 'Choose a room to {}:'.format(action), reply_markup=reply_markup)
 
 
 def handler_mess(data):
