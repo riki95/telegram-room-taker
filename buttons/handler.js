@@ -45,8 +45,11 @@ function update(room, to_occupy, context) {
     const params = {
         TableName:table,
         Key:{'room': room},
-        UpdateExpression: 'set occupied = :o',
-        ExpressionAttributeValues:{':o': to_occupy}
+        UpdateExpression: 'set occupied = :o, id = :id',
+        ExpressionAttributeValues:{
+            ':o': to_occupy,
+            ':id': '0'
+        }
     };
 
     console.log(`Updating room ${room}, to_occupy=${to_occupy}`);
