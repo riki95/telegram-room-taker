@@ -12,7 +12,7 @@ def format_items(items):
     for item in items:
         if item['occupied']:
             res += 'Room {item[room]}: taken by {item[id]}\n'.format(item=item)
-        else
+        else:
             res += 'Room {item[room]}: free\n'.format(item=item)
     return res
 
