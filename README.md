@@ -32,9 +32,17 @@ Now your package is ready to be deployed on Amazon AWS:
 serverless deploy
 ```
 
+## The Bot
 If you send /start to your Bot's chat, you will be ready to work with it.
 
 ![img](https://i.imgur.com/LQJOJhZ.png)
+
+The main commands are:
+* /info - shows all of the available commands
+* /status - show information about rooms, like available or not and who is in there
+* /take - command to take an available room
+* /free - command to free the room you are into
+
 ## Authors
 
 * **Riccardo Basso** - *Università degli studi di Genova*
